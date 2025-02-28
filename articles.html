@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOOSE - Articles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F4F4F4;
+        }
+
+        /* 导航栏样式与主页完全相同 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 80px;
+            background-color: #F4F4F4;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 80px;
+            right: 80px;
+            height: 1px;
+            background-color: #000;
+        }
+
+        /* 复制主页的其他导航栏样式 */
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+        }
+
+        /* 搜索栏样式 */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 160px;
+        }
+
+        .search-line {
+            width: 120px;
+            height: 1px;
+            background-color: #000;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .search-text {
+            position: absolute;
+            right: 0;
+            bottom: -3px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            border: none;
+            background: transparent;
+            width: 120px;
+            padding: 5px 0;
+            font-size: 14px;
+            outline: none;
+            caret-color: #000;
+        }
+
+        .search-box::placeholder {
+            opacity: 0;
+        }
+
+        /* 每日精选部分调整 */
+        .daily-picks {
+            margin-top: 100px;
+            padding: 0 80px;
+        }
+
+        .daily-picks h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .cards-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding: 0;  /* 移除内边距 */
+        }
+
+        .cards-wrapper {
+            display: flex;
+            gap: 20px;
+            transition: transform 0.3s ease;
+            margin: 0 -80px;  /* 抵消页面边距 */
+            padding: 0 80px;  /* 添加内边距以对齐页面 */
+        }
+
+        .cards-container::before,
+        .cards-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 80px;  /* 与页面边距相同 */
+            background: #F4F4F4;
+            z-index: 1;
+        }
+
+        .cards-container::before {
+            left: -80px;  /* 向左延伸到页面边缘 */
+        }
+
+        .cards-container::after {
+            right: -80px;  /* 向右延伸到页面边缘 */
+        }
+
+        .card {
+            flex: 0 0 calc((100% - 40px) / 3);
+            margin-right: 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 368px;
+            border: 1px solid transparent;  /* 添加透明边框，防止hover时出现抖动 */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;  /* 添加过渡效果 */
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 0 16px;  /* 移除上下内边距，只保留左右内边距 */
+            margin-top: 16px;  /* 从图片下方开始的间距 */
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            margin-top: 0;
+            white-space: nowrap;  /* 强制一行显示 */
+            overflow: hidden;  /* 隐藏超出部分 */
+            text-overflow: ellipsis;  /* 显示省略号 */
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;  /* 添加行高确保两行文字的显示效果 */
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .nav-button {
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            border: none;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button img {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        /* 当按钮禁用时降低图标透明度 */
+        .nav-button[style*="opacity: 0.5"] img {
+            opacity: 0.5;
+        }
+
+        /* 全部文章部分调整 */
+        .all-articles {
+            padding: 40px 80px;
+        }
+
+        .articles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-right: 0;  /* 确保不会有额外的右边距 */
+        }
+
+        .sort-buttons {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-right: -15px;  /* 向右移动以对齐分割线 */
+        }
+
+        .sort-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            padding: 0 15px;
+            height: 16px;  /* 调整高度为16px */
+            line-height: 16px;
+        }
+
+        /* 修改分割线位置 */
+        .sort-buttons::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            height: 16px;
+            width: 1px;
+            background-color: #000;
+            transform: translateX(-50%);
+        }
+
+        .sort-button:first-child {
+            border-right: none;
+            margin-right: 15px;
+        }
+
+        .sort-button:first-child::after {
+            display: none;
+        }
+
+        .sort-button.active {
+            color: #000;
+        }
+
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid #ddd;
+        }
+
+        .article-item {
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .article-title {
+            font-size: 18px;
+            margin: 0;  /* 移除所有外边距 */
+            padding-right: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 800px;
+        }
+
+        .article-content {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            padding-right: 200px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;  /* 限制两行 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 800px;  /* 限制最大宽度 */
+            line-height: 1.4;
+        }
+
+        .article-meta {
+            position: absolute;
+            top: 24px;  /* 与文章项的上内边距相同 */
+            right: 0;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .article-meta span {
+            white-space: nowrap;  /* 防止文字换行 */
+        }
+
+        /* 修改卡片悬停效果 */
+        .card:hover {
+            border-color: #000;  /* 悬停时显示黑色边框 */
+            box-shadow: none;  /* 移除原有的阴影效果 */
+        }
+
+        .article-item:hover .article-title {
+            color: #666;
+        }
+
+        /* 修改分页按钮选择器，使其更具体 */
+        .article-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .page-button[data-page] {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-button.active {
+            font-weight: bold;
+            color: #000;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+
+        .page-button:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">GOOSE</a>
+        <div class="nav-links">
+            <a href="#" id="douyin">抖音</a>
+            <a href="#" id="xiaohongshu">小红书</a>
+            <a href="#" id="wechat">公众号</a>
+            <a href="#" id="sspai">少数派</a>
+            <a href="#" id="pm">产品经理</a>
+        </div>
+        <div class="search-container">
+            <div class="search-line"></div>
+            <input type="text" class="search-box">
+            <div class="search-text">搜索</div>
+        </div>
+    </nav>
+
+    <section class="daily-picks">
+        <h2>每日精选</h2>
+        <div class="cards-container">
+            <div class="cards-wrapper">
+                <a href="https://www.woshipm.com/ai/6183505.html" target="_blank" rel="noopener noreferrer" class="card" data-link="article1-url">
+                    <img src="image/1.png" alt="文章配图">
+                    <div class="card-content">
+                        <h3 class="card-title">Deepseek掀起网络玄学2.0时代：赛博乩童和电子庙宇</h3>
+                        <p class="card-text">DeepSeek的爆火不仅改变了人们对AI的认知，还意外地掀起了一场"网络玄学2.0"浪潮。这款现象级的AI产品在短时间内登顶多国下载榜单，成为社交媒体上的热门话题。</p>
+                    </div>
+                </a>
+                <a href="https://www.woshipm.com/ai/6183803.html" target="_blank" rel="noopener noreferrer" class="card" data-link="article2-url">
+                    <img src="image/2.png" alt="文章配图">
+                    <div class="card-content">
+                        <h3 class="card-title">用户体验设计的创造力：使用人工智能如何助力创新</h3>
+                        <p class="card-text">随着人工智能（AI）技术的飞速发展，用户体验（UX）设计领域正迎来一场深刻的变革。AI不仅能够提升设计效率，还能在创意生成、问题解决和用户体验创新等方面发挥重要作用。</p>
+                    </div>
+                </a>
+                <a href="https://www.woshipm.com/ai/6185894.html" target="_blank" rel="noopener noreferrer" class="card" data-link="article3-url">
+                    <img src="image/3.png" alt="文章配图">
+                    <div class="card-content">
+                        <h3 class="card-title">AI时代产品经理的3个底层跃迁：重构需求、用户与迭代逻辑</h3>
+                        <p class="card-text">"当ChatGPT能10秒产出用户画像、Midjourney可生成高保真原型时，产品经理的核心竞争力还剩什么？2025年，真正的危机不是被AI取代，</p>
+                    </div>
+                </a>
+                <a href="https://sspai.com/post/96359" target="_blank" rel="noopener noreferrer" class="card" data-link="article4-url">
+                    <img src="image/4.png" alt="文章配图">
+                    <div class="card-content">
+                        <h3 class="card-title">本周看什么 | 最近值得一看的 8 部作品</h3>
+                        <p class="card-text">近期佳作推荐：[韩剧] 善意的竞争、[美剧] 匹兹堡医护前线、[国产] 蔷薇风暴、[台剧] 死了一个娱乐女记者之后、[日剧] 御上老师、[日剧] 香草的每天、[纪录片] 无穷</p>
+                    </div>
+                </a>
+                <a href="https://sspai.com/post/88960" target="_blank" rel="noopener noreferrer" class="card" data-link="article5-url">
+                    <img src="image/5.png" alt="文章配图">
+                    <div class="card-content">
+                        <h3 class="card-title">如何进入生成式 AI 的新范式</h3>
+                        <p class="card-text">Matrix 是少数派的写作社区，我们主张分享真实的产品体验，有实用价值的经验与思考。我们会不定期挑选 Matrix 最优质的文章，展示来自用户的最真实的体验和观点。</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="navigation-buttons">
+            <button class="nav-button prev">
+                <img src="image/左@2x.png" alt="上一页">
+            </button>
+            <button class="nav-button next">
+                <img src="image/右@2x.png" alt="下一页">
+            </button>
+        </div>
+    </section>
+
+    <section class="all-articles">
+        <div class="articles-header">
+            <h2>全部文章</h2>
+            <div class="sort-buttons">
+                <button class="sort-button active">最新</button>
+                <button class="sort-button">最热</button>
+            </div>
+        </div>
+        <div class="article-list">
+            <a href="https://www.woshipm.com/ai/6183505.html" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">Deepseek掀起网络玄学2.0时代：赛博乩童和电子庙宇</h3>
+                <p class="article-content">DeepSeek的爆火不仅改变了人们对AI的认知，还意外地掀起了一场"网络玄学2.0"浪潮。这款现象级的AI产品在短时间内登顶多国下载榜单，成为社交媒体上的热门话题。用户们纷纷利用DeepSeek进行算命、预测前世今生，甚至出现了"赛博大师"和"电子庙宇"的说法。</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 10.8k</span>
+                    <span class="date">2025-02-22</span>
+                </div>
+            </a>
+            <a href="https://www.woshipm.com/ai/6183803.html" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">用户体验设计的创造力：使用人工智能如何助力创新</h3>
+                <p class="article-content">随着人工智能（AI）技术的飞速发展，用户体验（UX）设计领域正迎来一场深刻的变革。AI不仅能够提升设计效率，还能在创意生成、问题解决和用户体验创新等方面发挥重要作用。本文将探讨AI如何助力UX设计师的创造力，</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 8.5k</span>
+                    <span class="date">2025-02-23</span>
+                </div>
+            </a>
+            <a href="https://www.woshipm.com/ai/6185894.html" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">AI时代产品经理的3个底层跃迁：重构需求、用户与迭代逻辑</h3>
+                <p class="article-content">"当ChatGPT能10秒产出用户画像、Midjourney可生成高保真原型时，产品经理的核心竞争力还剩什么？
+
+                    2025年，真正的危机不是被AI取代，而是用旧地图寻找新大陆——接下来我将拆解AI重构产品经理能力的3个关键逻辑。"</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 3.9k</span>
+                    <span class="date">2025-02-28</span>
+                </div>
+            </a>
+            <a href="https://sspai.com/post/96359" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">本周看什么 | 最近值得一看的 8 部作品</h3>
+                <p class="article-content">近期佳作推荐：[韩剧] 善意的竞争、[美剧] 匹兹堡医护前线、[国产] 蔷薇风暴、[台剧] 死了一个娱乐女记者之后、[日剧] 御上老师、[日剧] 香草的每天、[纪录片] 无穷</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 3.5k</span>
+                    <span class="date">2025-02-14</span>
+                </div>
+            </a>
+            <a href="https://sspai.com/post/88960" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">如何进入生成式 AI 的新范式</h3>
+                <p class="article-content">Matrix 是少数派的写作社区，我们主张分享真实的产品体验，有实用价值的经验与思考。我们会不定期挑选 Matrix 最优质的文章，展示来自用户的最真实的体验和观点。</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 3.3k</span>
+                    <span class="date">2024-05-22</span>
+                </div>
+            </a>
+            <a href="https://sspai.com/post/96745" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">SciSpace 的深度文献回顾（Deep Review）功能，好使吗？
+                </h3>
+                <p class="article-content">每到写毕业论文的时候，学生们总会觉得特别头疼，因为要面对的论文实在是太多了。经常是花了半天时间读下来，才发现这篇论文跟自己的研究方向完全不搭边，这种感觉真是让人既沮丧又挫败。</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 3.1k</span>
+                    <span class="date">2025-02-28</span>
+                </div>
+            </a>
+            <a href="https://sspai.com/post/96150" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">Deepseek 教我的法则：不是要「会提问」，而是要「早动手」</h3>
+                <p class="article-content">最近 AI 的智力升级了，时不时就有大佬们出来说：「人工智能时代，会提问的人，会比回答问题的人更加重要。」大佬们话说了一半，然后就露出蒙娜丽莎的微笑，让群众们（含本人）都有点懵。</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 2.8k</span>
+                    <span class="date">2025-02-12</span>
+                </div>
+            </a>
+            <a href="https://sspai.com/post/96120" target="_blank" rel="noopener noreferrer" class="article-item">
+                <h3 class="article-title">教育的下一步
+                </h3>
+                <p class="article-content">随着 Deepseek R1 模型的出现，之前我对大语言模型的诸多论断全都被推翻了。比如先前我在「当患有 ADHD 的工程师坐上了名为人工智能的四驱赛博轮椅」 这篇文章提到的开发范式，已经出现了大幅的松动。</p>
+                <div class="article-meta">
+                    <span class="views">阅读量 2.5k</span>
+                    <span class="date">2025-02-07</span>
+                </div>
+            </a>
+        </div>
+        
+        <!-- 修改分页容器的类名 -->
+        <div class="article-pagination">
+            <button class="page-button prev" id="prevPage">上一页</button>
+            <div class="page-numbers">
+                <button class="page-button" data-page="1">1</button>
+                <button class="page-button" data-page="2">2</button>
+            </div>
+            <button class="page-button next" id="nextPage">下一页</button>
+        </div>
+    </section>
+
+    <script>
+        // 卡片切换逻辑
+        const cardsWrapper = document.querySelector('.cards-wrapper');
+        const cardPrevButton = document.querySelector('.prev');
+        const cardNextButton = document.querySelector('.next');
+        let currentIndex = 0;
+        const totalCards = 5;  // 总卡片数
+        const visibleCards = 3;  // 可见卡片数
+        const maxSlides = totalCards - visibleCards;  // 最大可滑动次数
+
+        function updateSlide() {
+            const slideWidth = document.querySelector('.card').offsetWidth + 20; // 卡片宽度 + 间距
+            cardsWrapper.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            
+            // 更新按钮状态
+            cardPrevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+            cardNextButton.style.opacity = currentIndex === maxSlides ? '0.5' : '1';
+        }
+
+        cardNextButton.addEventListener('click', () => {
+            if (currentIndex < maxSlides) {
+                currentIndex++;
+                updateSlide();
+            }
+        });
+
+        cardPrevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        });
+
+        // 初始化按钮状态
+        updateSlide();
+
+        // 分页功能
+        const articlesPerPage = 6; // 每页显示6篇文章
+        const articleList = document.querySelector('.article-list');
+        let articles = Array.from(articleList.children); // 改为 let，使其可以更新
+        let totalPages = Math.ceil(articles.length / articlesPerPage);
+        const pagination = document.querySelector('.article-pagination');
+        const pageButtons = document.querySelectorAll('.page-button[data-page]');
+        const prevButton = document.getElementById('prevPage');
+        const nextButton = document.getElementById('nextPage');
+
+        let currentPage = 1;
+
+        function showPage(page) {
+            const start = (page - 1) * articlesPerPage;
+            const end = start + articlesPerPage;
+            
+            articles.forEach((article, index) => {
+                if (index >= start && index < end) {
+                    article.style.display = 'flex';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+            
+            // 更新按钮状态
+            prevButton.disabled = page === 1;
+            nextButton.disabled = page === totalPages;
+            
+            // 更新页码按钮状态
+            pageButtons.forEach(button => {
+                const buttonPage = parseInt(button.dataset.page);
+                if (buttonPage <= totalPages) {
+                    button.style.display = '';
+                    button.classList.toggle('active', buttonPage === page);
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+
+            currentPage = page;
+        }
+
+        function sortArticles(type) {
+            articles = Array.from(document.querySelectorAll('.article-item')); // 更新全局 articles 变量
+            
+            articles.sort((a, b) => {
+                if (type === 'latest') {
+                    const dateA = new Date(a.querySelector('.date').textContent);
+                    const dateB = new Date(b.querySelector('.date').textContent);
+                    return dateB - dateA;
+                } else if (type === 'hot') {
+                    const viewsA = parseInt(a.querySelector('.views').textContent.match(/\d+/)[0]);
+                    const viewsB = parseInt(b.querySelector('.views').textContent.match(/\d+/)[0]);
+                    return viewsB - viewsA;
+                }
+            });
+            
+            const articleList = document.querySelector('.article-list');
+            articleList.innerHTML = '';
+            
+            articles.forEach(article => {
+                const clone = article.cloneNode(true);
+                articleList.appendChild(clone);
+            });
+            
+            // 更新文章列表引用
+            articles = Array.from(document.querySelectorAll('.article-item'));
+            
+            // 更新总页数
+            totalPages = Math.ceil(articles.length / articlesPerPage);
+            
+            // 重新显示第一页
+            showPage(1);
+        }
+
+        // 初始化分页事件监听器
+        function initPagination() {
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    showPage(currentPage - 1);
+                }
+            });
+
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    showPage(currentPage + 1);
+                }
+            });
+
+            pageButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const page = parseInt(button.dataset.page);
+                    showPage(page);
+                });
+            });
+        }
+
+        // 排序按钮切换
+        const sortButtons = document.querySelectorAll('.sort-button');
+        
+        sortButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                sortButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const sortType = button.textContent === '最新' ? 'latest' : 'hot';
+                sortArticles(sortType);
+            });
+        });
+
+        // 导航栏链接跳转
+        document.getElementById('douyin').addEventListener('click', function() {
+            window.location.href = '您的抖音链接';
+        });
+
+        document.getElementById('xiaohongshu').addEventListener('click', function() {
+            window.location.href = '您的小红书链接';
+        });
+
+        document.getElementById('wechat').addEventListener('click', function() {
+            window.location.href = '您的公众号链接';
+        });
+
+        document.getElementById('sspai').addEventListener('click', function() {
+            window.location.href = '您的少数派链接';
+        });
+
+        document.getElementById('pm').addEventListener('click', function() {
+            window.location.href = '您的产品经理主页链接';
+        });
+
+        // 初始化显示第一页
+        window.addEventListener('DOMContentLoaded', () => {
+            initPagination(); // 初始化分页事件监听器
+            showPage(1);
+        });
+
+        // 添加页面刷新功能
+        function refreshPage() {
+            window.location.reload();
+        }
+
+        // 可以在需要的地方调用 refreshPage() 函数
+        // 例如：添加一个刷新按钮
+        document.querySelector('.logo').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html> 

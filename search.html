@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - GOOSE</title>
+    <style>
+        /* 复制主页的基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F4F4F4;
+        }
+
+        /* 搜索结果样式 */
+        .search-results {
+            padding: 40px 80px;
+        }
+
+        .search-header {
+            margin-bottom: 30px;
+        }
+
+        .search-term {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .result-count {
+            color: #666;
+        }
+
+        .result-item {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-content {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .result-tags {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tag {
+            background: #eee;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- 复制主页的导航栏 -->
+    <nav class="navbar">
+        <!-- ... 导航栏内容 ... -->
+    </nav>
+
+    <div class="search-results">
+        <div class="search-header">
+            <h1 class="search-term">搜索结果：<span id="searchTermDisplay"></span></h1>
+            <p class="result-count">找到 <span id="resultCount">0</span> 条结果</p>
+        </div>
+        <div id="resultsList"></div>
+    </div>
+
+    <script>
+        // 显示搜索结果
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchTerm = sessionStorage.getItem('searchTerm');
+            const results = JSON.parse(sessionStorage.getItem('searchResults') || '[]');
+            
+            document.getElementById('searchTermDisplay').textContent = searchTerm;
+            document.getElementById('resultCount').textContent = results.length;
+            
+            const resultsList = document.getElementById('resultsList');
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <a href="${result.url}" class="result-title">${result.title}</a>
+                    <p class="result-content">${result.content}</p>
+                    <div class="result-tags">
+                        ${result.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                resultsList.appendChild(resultItem);
+            });
+        });
+    </script>
+</body>
+</html> 

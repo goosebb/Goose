@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOOSE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarge&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background-color: #F4F4F4;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 80px;
+            background-color: #F4F4F4;
+            position: relative;
+        }
+
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 80px;
+            right: 80px;
+            height: 1px;
+            background-color: #000;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 160px;
+        }
+
+        .search-line {
+            width: 120px;
+            height: 1px;
+            background-color: #000;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .search-text {
+            position: absolute;
+            right: 0;
+            bottom: -3px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            border: none;
+            background: transparent;
+            width: 120px;
+            padding: 5px 0;
+            font-size: 14px;
+            outline: none;
+            caret-color: #000;
+        }
+
+        .search-box::placeholder {
+            opacity: 0;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            padding: 50px 80px;
+            margin-top: 50px;
+            gap: 40px;
+        }
+
+        .left-section {
+            flex: 1;
+            margin-top: 20px;
+        }
+
+        .goose-text {
+            font-family: 'Sarge', cursive;
+            font-size: 520px;
+            color: #808080;
+            line-height: 1;
+            margin-top: -100px;
+        }
+
+        .right-section {
+            flex: 1;
+            margin-top: 80px;
+            padding-right: 0;
+            width: calc(100% - 40px);
+        }
+
+        .experience-title {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+
+        .experience-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .experience-item {
+            padding: 24px 0;
+            border-bottom: 1px solid #000;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .more-content {
+            text-align: center;
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+        }
+
+        .more-content a {
+            text-decoration: underline;
+            color: black;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">GOOSE</a>
+        <div class="nav-links">
+            <a href="#" id="douyin">抖音</a>
+            <a href="#" id="xiaohongshu">小红书</a>
+            <a href="#" id="wechat">公众号</a>
+            <a href="#" id="sspai">少数派</a>
+            <a href="#" id="pm">产品经理</a>
+        </div>
+        <div class="search-container">
+            <div class="search-line"></div>
+            <input type="text" class="search-box" id="searchBox" placeholder="搜索文章">
+            <div class="search-text">搜索</div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="left-section">
+            <div class="goose-text">Goose</div>
+        </div>
+        <div class="right-section">
+            <h1 class="experience-title">Experience</h1>
+            <div class="experience-list">
+                <div class="experience-item">AI训练师</div>
+                <div class="experience-item">UI/UX 设计师</div>
+                <div class="experience-item">平面设计师</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="more-content">
+        <a href="articles.html" id="more-link">More content →</a>
+    </div>
+
+    <script>
+        // 在这里添加链接跳转的JavaScript代码
+        document.getElementById('douyin').addEventListener('click', function() {
+            window.location.href = '您的抖音链接';
+        });
+
+        document.getElementById('xiaohongshu').addEventListener('click', function() {
+            window.location.href = '您的小红书链接';
+        });
+
+        document.getElementById('wechat').addEventListener('click', function() {
+            window.location.href = '您的公众号链接';
+        });
+
+        document.getElementById('sspai').addEventListener('click', function() {
+            window.location.href = '您的少数派链接';
+        });
+
+        document.getElementById('pm').addEventListener('click', function() {
+            window.location.href = '您的产品经理主页链接';
+        });
+
+        document.getElementById('more-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = this.getAttribute('href');
+        });
+
+        // 文章数据（可以根据实际情况扩充）
+        const articles = [
+            {
+                title: "Deepseek掀起网络玄学2.0时代：赛博乩童和电子庙宇",
+                url: "https://www.woshipm.com/ai/6183505.html",
+                content: "DeepSeek的爆火不仅改变了人们对AI的认知，还意外地掀起了一场"网络玄学2.0"浪潮。这款现象级的AI产品在短时间内登顶多国下载榜单，成为社交媒体上的热门话题。",
+                tags: ["AI", "DeepSeek", "技术"]
+            },
+            {
+                title: "用户体验设计的创造力：使用人工智能如何助力创新",
+                url: "https://www.woshipm.com/ai/6183803.html",
+                content: "随着人工智能（AI）技术的飞速发展，用户体验（UX）设计领域正迎来一场深刻的变革。AI不仅能够提升设计效率，还能在创意生成、问题解决和用户体验创新等方面发挥重要作用。",
+                tags: ["设计", "UI", "UX"]
+            },
+            {
+                title: "AI时代产品经理的3个底层跃迁：重构需求、用户与迭代逻辑",
+                url: "https://www.woshipm.com/ai/6185894.html",
+                content: "当ChatGPT能10秒产出用户画像、Midjourney可生成高保真原型时，产品经理的核心竞争力还剩什么？2025年，真正的危机不是被AI取代。",
+                tags: ["AI", "产品经理", "职业发展"]
+            },
+            {
+                title: "本周看什么 | 最近值得一看的 8 部作品",
+                url: "https://sspai.com/post/96359",
+                content: "近期佳作推荐：[韩剧] 善意的竞争、[美剧] 匹兹堡医护前线、[国产] 蔷薇风暴、[台剧] 死了一个娱乐女记者之后、[日剧] 御上老师、[日剧] 香草的每天、[纪录片] 无穷",
+                tags: ["影视", "推荐", "娱乐"]
+            },
+            {
+                title: "如何进入生成式 AI 的新范式",
+                url: "https://sspai.com/post/88960",
+                content: "Matrix 是少数派的写作社区，我们主张分享真实的产品体验，有实用价值的经验与思考。我们会不定期挑选 Matrix 最优质的文章，展示来自用户的最真实的体验和观点。",
+                tags: ["AI", "生成式AI", "技术趋势"]
+            }
+        ];
+
+        // 搜索功能
+        const searchBox = document.getElementById('searchBox');
+        let searchTimeout;
+
+        searchBox.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const searchTerm = e.target.value.toLowerCase().trim();
+            
+            // 使用防抖，避免频繁搜索
+            searchTimeout = setTimeout(() => {
+                if (searchTerm.length >= 2) { // 至少输入2个字符才开始搜索
+                    const results = searchArticles(searchTerm);
+                    if (results.length > 0) {
+                        // 将搜索结果存储到 sessionStorage
+                        sessionStorage.setItem('searchResults', JSON.stringify(results));
+                        sessionStorage.setItem('searchTerm', searchTerm);
+                        // 跳转到搜索结果页面
+                        window.location.href = 'search.html';
+                    }
+                }
+            }, 500);
+        });
+
+        // 搜索文章函数
+        function searchArticles(term) {
+            return articles.filter(article => {
+                const titleMatch = article.title.toLowerCase().includes(term);
+                const contentMatch = article.content.toLowerCase().includes(term);
+                const tagMatch = article.tags.some(tag => tag.toLowerCase().includes(term));
+                return titleMatch || contentMatch || tagMatch;
+            });
+        }
+    </script>
+</body>
+</html> 
